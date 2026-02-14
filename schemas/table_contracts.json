@@ -1,0 +1,28 @@
+{
+  "shopping": {
+    "primary_keys": ["domain", "level", "case_id"],
+    "tables": [
+      "shopping_queries.parquet",
+      "shopping_cases.parquet",
+      "shopping_gt_products.parquet",
+      "shopping_gt_coupons.parquet",
+      "shopping_catalog.parquet",
+      "shopping_user_info.parquet",
+      "shopping_initial_cart.parquet"
+    ]
+  },
+  "travel": {
+    "primary_keys": ["domain", "language", "sample_id"],
+    "tables": [
+      "travel_queries.parquet",
+      "travel_constraints.parquet",
+      "travel_db_trains.parquet",
+      "travel_db_flights.parquet",
+      "travel_db_hotels.parquet",
+      "travel_db_restaurants.parquet",
+      "travel_db_attractions.parquet",
+      "travel_db_locations.parquet",
+      "travel_db_transportation.parquet"
+    ]
+  }
+}

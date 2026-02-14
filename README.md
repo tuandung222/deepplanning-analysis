@@ -33,3 +33,14 @@ Phân tích trong repo này dựa trên:
 - [x] Clone/cập nhật mã nguồn DeepPlanning vào `/Users/admin/TuanDung/repos/Qwen-Agent`.
 - [x] Tạo repo phân tích GitHub.
 - [x] Viết bộ tài liệu phân tích cốt lõi.
+
+## Bộ Khung Chuẩn Hóa HF
+
+Đã thêm bộ khung chuẩn hóa và publish lên Hugging Face Hub:
+
+- ETL build parquet: `/Users/admin/TuanDung/repos/deepplanning-analysis/etl/build_deepplanning_parquet.py`
+- Validation parquet: `/Users/admin/TuanDung/repos/deepplanning-analysis/etl/validate_deepplanning_parquet.py`
+- Dataset card mẫu HF: `/Users/admin/TuanDung/repos/deepplanning-analysis/hf/README.dataset_card.md`
+- Script prepare publish dir: `/Users/admin/TuanDung/repos/deepplanning-analysis/scripts/prepare_hf_publish_dir.sh`
+- Script publish HF: `/Users/admin/TuanDung/repos/deepplanning-analysis/scripts/publish_to_hf.py`
+- Runbook end-to-end: `/Users/admin/TuanDung/repos/deepplanning-analysis/docs/07-hf-publish-runbook.md`

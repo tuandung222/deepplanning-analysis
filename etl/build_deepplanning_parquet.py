@@ -62,6 +62,8 @@ def _extract_zip(zip_path: Path, out_dir: Path) -> Path:
 
 
 def _iter_csv_rows(path: Path) -> Iterable[Dict[str, str]]:
+    if not path.exists():
+        return
     with path.open("r", encoding="utf-8-sig", newline="") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -104,6 +106,10 @@ def build_shopping_tables(
 
     for level in (1, 2, 3):
         level_dir = extracted_root / f"database_level{level}"
+        if not level_dir.exists():
+            level_dir = extracted_root / f"level{level}" / f"database_level{level}"
+        if not level_dir.exists():
+            raise FileNotFoundError(f"Cannot find extracted shopping data for level {level} under {extracted_root}")
         case_dirs = sorted(
             [p for p in level_dir.glob("case_*") if p.is_dir()],
             key=lambda p: int(p.name.split("_")[1]),
@@ -278,6 +284,10 @@ def build_travel_tables(
 
     for lang in ("en", "zh"):
         db_root = extracted_root / f"database_{lang}"
+        if not db_root.exists():
+            db_root = extracted_root / lang / f"database_{lang}"
+        if not db_root.exists():
+            raise FileNotFoundError(f"Cannot find extracted travel data for language={lang} under {extracted_root}")
         id_dirs = sorted([p for p in db_root.glob("id_*") if p.is_dir()], key=lambda p: int(p.name.split("_")[1]))
 
         for id_dir in id_dirs:
@@ -375,31 +385,26 @@ def main() -> None:
     travel_en_extracted = args.work_dir / "travel_en"
     travel_zh_extracted = args.work_dir / "travel_zh"
 
-    level1_root = _extract_tar(args.raw_cache_dir / "database_level1.tar.gz", shopping_extracted / "level1")
+    _extract_tar(args.raw_cache_dir / "database_level1.tar.gz", shopping_extracted / "level1")
     _extract_tar(args.raw_cache_dir / "database_level2.tar.gz", shopping_extracted / "level2")
     _extract_tar(args.raw_cache_dir / "database_level3.tar.gz", shopping_extracted / "level3")
-
-    # Consolidate shopping extracted roots into one directory for easier iteration.
-    consolidated_shopping = args.work_dir / "shopping_consolidated"
-    _ensure_dir(consolidated_shopping)
-    for level, src in [(1, shopping_extracted / "level1" / "database_level1"), (2, shopping_extracted / "level2" / "database_level2"), (3, shopping_extracted / "level3" / "database_level3")]:
-        dst = consolidated_shopping / f"database_level{level}"
-        if not dst.exists():
-            dst.symlink_to(src)
 
     _extract_zip(args.raw_cache_dir / "database_en.zip", travel_en_extracted)
     _extract_zip(args.raw_cache_dir / "database_zh.zip", travel_zh_extracted)
 
-    consolidated_travel = args.work_dir / "travel_consolidated"
-    _ensure_dir(consolidated_travel)
-    for lang, src in [("en", travel_en_extracted / "database_en"), ("zh", travel_zh_extracted / "database_zh")]:
-        dst = consolidated_travel / f"database_{lang}"
-        if not dst.exists():
-            dst.symlink_to(src)
-
     counts: Dict[str, int] = {}
-    counts.update(build_shopping_tables(shopping_root, consolidated_shopping, args.out_dir))
-    counts.update(build_travel_tables(travel_root, consolidated_travel, args.out_dir, args.include_distance_matrix))
+    counts.update(build_shopping_tables(shopping_root, shopping_extracted, args.out_dir))
+
+    travel_extracted = args.work_dir / "travel"
+    _ensure_dir(travel_extracted)
+    en_target = travel_extracted / "database_en"
+    zh_target = travel_extracted / "database_zh"
+    if not en_target.exists():
+        en_target.symlink_to((travel_en_extracted / "database_en").resolve())
+    if not zh_target.exists():
+        zh_target.symlink_to((travel_zh_extracted / "database_zh").resolve())
+
+    counts.update(build_travel_tables(travel_root, travel_extracted, args.out_dir, args.include_distance_matrix))
 
     build_manifest(args.out_dir / "manifest.json", counts, args.include_distance_matrix, args.qwen_agent_root)
     print(json.dumps({"status": "ok", "out_dir": str(args.out_dir), "tables": counts}, indent=2, ensure_ascii=False))

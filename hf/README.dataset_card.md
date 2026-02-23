@@ -15,6 +15,39 @@ pretty_name: DeepPlanning Parquet Standardized
 size_categories:
 - 1k<n<10k
 viewer: true
+configs:
+- config_name: default
+  data_files:
+  - split: shopping_queries
+    path: shopping_queries.parquet
+  - split: shopping_cases
+    path: shopping_cases.parquet
+  - split: shopping_gt_products
+    path: shopping_gt_products.parquet
+  - split: shopping_gt_coupons
+    path: shopping_gt_coupons.parquet
+  - split: shopping_catalog
+    path: shopping_catalog.parquet
+  - split: shopping_user_info
+    path: shopping_user_info.parquet
+  - split: shopping_initial_cart
+    path: shopping_initial_cart.parquet
+  - split: travel_queries
+    path: travel_queries.parquet
+  - split: travel_constraints
+    path: travel_constraints.parquet
+  - split: travel_db_trains
+    path: travel_db_trains.parquet
+  - split: travel_db_flights
+    path: travel_db_flights.parquet
+  - split: travel_db_hotels
+    path: travel_db_hotels.parquet
+  - split: travel_db_restaurants
+    path: travel_db_restaurants.parquet
+  - split: travel_db_attractions
+    path: travel_db_attractions.parquet
+  - split: travel_db_locations
+    path: travel_db_locations.parquet
 ---
 
 # DeepPlanning Parquet Standardized
